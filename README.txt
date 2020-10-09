@@ -1,7 +1,7 @@
 ######
 In this project, we were interested to see how a large-bodied, social bird
 	influenced the population genetics of a preferred fruit tree compared
-	to a tree eaten by a wide variety of birds.
+	to a less preferred tree.
 
 Files to be included in this directory:
 1. Code for fineRADstructure analysis, including R code for plotting
@@ -10,6 +10,6 @@ Files to be included in this directory:
 3. Notes on parameters used for filtering, assembling, calling SNPs, and filtering again
 
 
-Sequence data is housed at:
+Sequence data is housed at NCBI's SRA database as BioProject PRJNA666435.
 
 
