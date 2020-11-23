@@ -1,0 +1,212 @@
+# how well did ddRADseq provide coverage of the chloroplast genomes of M. toxiferum and B. simaruba?
+
+# GOAL: to estimate coverage and depth of coverage of chloroplast genome by my reads
+	# related goal, to verify that I've used the best genomes for each of my species
+
+# STEPS:
+	# 1. find individual with most reps/lowest missingness
+	# 2. map all reads from the individual to reference genome
+	# 3. report coverage and depth
+
+# RESULTS:
+
+### 1. finding best individual of each species to use###
+### metopium ###
+# max total raw reads:
+sort -k6 -n -t, SampleSheet_16261Las_N18068_L008.csv #the greatest number of reads is for MAy2: 10618903,10325153
+# minimum missingness of cp SNP calls: 
+less Final.recode.Stat.imiss #(many individuals have 0 missingness of the only 20 before filtering SNPs)
+sort -k5 -n -t, Final.recode.Stat.imiss #if I check the nuclear reads, A_y2 only has 5 SNPs less (out of 69717) than E_y27
+
+### bursera ###
+# max total raw reads:
+sort -k6 -n -t, SampleSheet_16261Las_N18068_L007.csv #here, the greatest number is for BDy19: 16841335,16226699
+# minimum missingness of cp SNPs: 
+less Final.recode.Stat.imiss #most are 0, but avoid B_m1 and B_m3
+
+
+### 2. mapping to reference genome ###
+### metopium ###
+bwa mem cpgenomes/Aoccidentale/Aoccidentale.fasta Metopium/renamedfiles3/A_y2.F.fq > Metopium/filtertests/cptests/map_Ay2_Aoccidentale.sam #do these from inside NY2020 directory
+bwa mem cpgenomes/Mindica/Mindica.fasta Metopium/renamedfiles3/A_y2.F.fq > Metopium/filtertests/cptests/map_Ay2_Mindica.sam
+bwa mem cpgenomes/Pvera/Pvera.fasta Metopium/renamedfiles3/A_y2.F.fq > Metopium/filtertests/cptests/map_Ay2_Pvera.sam
+bwa mem cpgenomes/Pweinmaniifolia/Pweinmaniifolia.fasta Metopium/renamedfiles3/A_y2.F.fq > Metopium/filtertests/cptests/map_Ay2_Pweinmaniifolia.sam
+bwa mem cpgenomes/Rchinensis/Rchinensis.fasta Metopium/renamedfiles3/A_y2.F.fq > Metopium/filtertests/cptests/map_Ay2_Rchinensis.sam
+bwa mem cpgenomes/Sbahiensis/Sbahiensis.fasta Metopium/renamedfiles3/A_y2.F.fq > Metopium/filtertests/cptests/map_Ay2_Sbahiensis.sam
+bwa mem cpgenomes/Sbirrea/Sbirrea.fasta Metopium/renamedfiles3/A_y2.F.fq > Metopium/filtertests/cptests/map_Ay2_Sbirrea.sam
+bwa mem cpgenomes/Smombin/Smombin.fasta Metopium/renamedfiles3/A_y2.F.fq > Metopium/filtertests/cptests/map_Ay2_Smombin.sam
+bwa mem cpgenomes/Stuberosa/Stuberosa.fasta Metopium/renamedfiles3/A_y2.F.fq > Metopium/filtertests/cptests/map_Ay2_Stuberosa.sam
+
+### Bursera ###
+cd /media/elgon/victoria/NY2020/
+bwa mem cpgenomes/Cwightii/Cwightii.fasta Bursera/renamedfiles3/D_y19.F.fq.gz > Bursera/filtertests/cptests/map_Dy19_Cwightii.sam
+bwa mem cpgenomes/Cfoliaceae/Cfoliaceae.fasta Bursera/renamedfiles3/D_y19.F.fq.gz > Bursera/filtertests/cptests/map_Dy19_Cfoliaceae.sam
+bwa mem cpgenomes/Cgileadensis/Cgileadensis.fasta Bursera/renamedfiles3/D_y19.F.fq.gz > Bursera/filtertests/cptests/map_Dy19_Cgileadensis.sam
+bwa mem cpgenomes/Bsacra/Bsacra.fasta Bursera/renamedfiles3/D_y19.F.fq.gz > Bursera/filtertests/cptests/map_Dy19_Bsacra.sam
+
+
+
+# 3. look at stats
+### Metopium ###
+samtools view -S -b map_Ay2_Aoccidentale.sam > map_Ay2_Aoccidentale.bam
+samtools view -S -b map_Ay2_Mindica.sam > map_Ay2_Mindica.bam
+samtools view -S -b map_Ay2_Pvera.sam > map_Ay2_Pvera.bam
+samtools view -S -b map_Ay2_Pweinmaniifolia.sam > map_Ay2_Pweinmaniifolia.bam
+samtools view -S -b map_Ay2_Rchinensis.sam > map_Ay2_Rchinensis.bam
+samtools view -S -b map_Ay2_Sbahiensis.sam > map_Ay2_Sbahiensis.bam
+samtools view -S -b map_Ay2_Sbirrea.sam > map_Ay2_Sbirrea.bam
+samtools view -S -b map_Ay2_Smombin.sam > map_Ay2_Smombin.bam
+samtools view -S -b map_Ay2_Stuberosa.sam > map_Ay2_Stuberosa.bam
+
+samtools sort map_Ay2_Aoccidentale.bam -o map_Ay2_Aoccidentale.sorted.bam
+samtools sort map_Ay2_Mindica.bam -o map_Ay2_Mindica.sorted.bam
+samtools sort map_Ay2_Pvera.bam -o map_Ay2_Pvera.sorted.bam
+samtools sort map_Ay2_Pweinmaniifolia.bam -o map_Ay2_Pweinmaniifolia.sorted.bam
+samtools sort map_Ay2_Rchinensis.bam -o map_Ay2_Rchinensis.sorted.bam
+samtools sort map_Ay2_Sbahiensis.bam -o map_Ay2_Sbahiensis.sorted.bam
+samtools sort map_Ay2_Sbirrea.bam -o map_Ay2_Sbirrea.sorted.bam
+samtools sort map_Ay2_Smombin.bam -o map_Ay2_Smombin.sorted.bam
+samtools sort map_Ay2_Stuberosa.bam -o map_Ay2_Stuberosa.sorted.bam
+
+samtools index map_Ay2_Aoccidentale.sorted.bam
+samtools index map_Ay2_Mindica.sorted.bam
+samtools index map_Ay2_Pvera.sorted.bam
+samtools index map_Ay2_Pweinmaniifolia.sorted.bam
+samtools index map_Ay2_Rchinensis.sorted.bam
+samtools index map_Ay2_Sbahiensis.sorted.bam
+samtools index map_Ay2_Sbirrea.sorted.bam
+samtools index map_Ay2_Smombin.sorted.bam
+samtools index map_Ay2_Stuberosa.sorted.bam
+
+#mean read depth (these useful commands came from Sarah Penir's website)
+samtools depth -a map_Ay2_Aoccidentale.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 149.354
+samtools depth -a map_Ay2_Mindica.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 159.514
+samtools depth -a map_Ay2_Pvera.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 156.98
+samtools depth -a map_Ay2_Pweinmaniifolia.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 156.92
+samtools depth -a map_Ay2_Rchinensis.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 154.788
+samtools depth -a map_Ay2_Sbahiensis.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 159.133
+samtools depth -a map_Ay2_Sbirrea.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 159.318
+samtools depth -a map_Ay2_Smombin.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 159.401
+samtools depth -a map_Ay2_Stuberosa.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 159.308
+# M indica has the greatest mean coverage, and the spondias genus has similarly high coverage
+	#but since mean is divided by number of bp covered, this could indicate less complete coverage
+
+#breadth of coverage (% of bases in cp genome covered by reads in my bam file)
+samtools depth -a map_Ay2_Aoccidentale.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# 47.027
+samtools depth -a map_Ay2_Mindica.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# 51.2182
+samtools depth -a map_Ay2_Pvera.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# 50.8495
+samtools depth -a map_Ay2_Pweinmaniifolia.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# 50.855
+samtools depth -a map_Ay2_Rchinensis.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# 50.4359
+samtools depth -a map_Ay2_Sbahiensis.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# 49.2337
+samtools depth -a map_Ay2_Sbirrea.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# 49.4336
+samtools depth -a map_Ay2_Smombin.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# 49.1208
+samtools depth -a map_Ay2_Stuberosa.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# 49.2468
+# so M. indica has the greatest coverage and the highest read depth
+
+
+#percent of reads that map (not super relevant if I'm trying to pick a genome to use)
+samtools flagstat map_Ay2_Aoccidentale.sorted.bam | awk -F "[(|%]" 'NR == 5 {print $2}'
+# 795582 reads mapped (7.49%)
+samtools flagstat map_Ay2_Mindica.sorted.bam
+# 790960 reads mapped (7.45%)
+samtools flagstat map_Ay2_Pvera.sorted.bam
+# 791705 reads mapped (7.46%)
+samtools flagstat map_Ay2_Pweinmaniifolia.sorted.bam
+# 791705 reads mapped (7.46%)
+samtools flagstat map_Ay2_Rchinensis.sorted.bam
+# 777030 reads mapped (7.32%)
+samtools flagstat map_Ay2_Sbahiensis.sorted.bam
+# 790516 reads mapped (7.45%)
+samtools flagstat map_Ay2_Sbirrea.sorted.bam
+# 790954 reads mapped (7.45%)
+samtools flagstat map_Ay2_Smombin.sorted.bam
+# 790354 reads mapped (7.45%)
+samtools flagstat map_Ay2_Stuberosa.sorted.bam
+# 790506 reads mapped (7.45%)
+# I do not understand why more reads mapped to A. occidentale, when it has lower coverage. perhaps that genome d
+
+### Bursera ###
+samtools view -S -b map_Dy19_Cwightii.sam > map_Dy19_Cwightii.bam
+samtools view -S -b map_Dy19_Cfoliaceae.sam > map_Dy19_Cfoliaceae.bam
+samtools view -S -b map_Dy19_Cgileadensis.sam > map_Dy19_Cgileadensis.bam
+samtools view -S -b map_Dy19_Bsacra.sam > map_Dy19_Bsacra.bam
+
+samtools view map_Dy19_Cwightii.bam | head
+
+samtools sort map_Dy19_Cwightii.bam -o map_Dy19_Cwightii.sorted.bam
+samtools sort map_Dy19_Cfoliaceae.bam -o map_Dy19_Cfoliaceae.sorted.bam
+samtools sort map_Dy19_Cgileadensis.bam -o map_Dy19_Cgileadensis.sorted.bam
+samtools sort map_Dy19_Bsacra.bam -o map_Dy19_Bsacra.sorted.bam
+
+samtools index map_Dy19_Cwightii.sorted.bam
+samtools index map_Dy19_Cfoliaceae.sorted.bam
+samtools index map_Dy19_Cgileadensis.sorted.bam
+samtools index map_Dy19_Bsacra.sorted.bam
+
+### **** fix the names for this section!
+#mean read depth
+samtools depth -a map_Dy19_Cwightii.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 79.4084
+samtools depth -a map_Dy19_Cfoliaceae.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 83.5632
+samtools depth -a map_Dy19_Cgileadensis.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 83.6886
+samtools depth -a map_Dy19_Bsacra.sorted.bam | awk '{c++;s+=$3}END{print s/c}'
+# 83.2562
+#
+
+#breadth of coverage
+samtools depth -a map_Dy19_Cwightii.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# % of total genome covered (at even 1x coverage)
+# 25.0929
+samtools depth -a map_Dy19_Cfoliaceae.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# 24.5792
+samtools depth -a map_Dy19_Cgileadensis.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# 24.63
+samtools depth -a map_Dy19_Bsacra.sorted.bam | awk '{c++; if($3>0) total+=1}END{print (total/c)*100}'
+# 24.6719
+#about 1/4 of the chloroplast is mapped by my reads, and C wightii is best covered. is that because it's shorter?
+
+
+#proportion of reads mapped to reference
+samtools flagstat map_Dy19_Cwightii.sorted.bam | awk -F "[(|%]" 'NR == 5 {print $2}'
+# 1.19% of reads mapped (200841)
+samtools flagstat map_Dy19_Cfoliaceae.sorted.bam | awk -F "[(|%]" 'NR == 5 {print $2}'
+# 1.19% of reads mapped (200809)
+samtools flagstat map_Dy19_Cgileadensis.sorted.bam | awk -F "[(|%]" 'NR == 5 {print $2}'
+# 1.19% of reads mapped (200778)
+samtools flagstat map_Dy19_Bsacra.sorted.bam | awk -F "[(|%]" 'NR == 5 {print $2}'
+# 1.19% of reads mapped (200686) 
+
+
+### TAKE AWAY ###
+# M. indica may be a good match for M. toxiferum, but P. vera is also fairly good and closer taxonomically
+# C. wightii is a good cp reference genome for B. simaruba
+
+
+#########################
+### in another script (TestingCPGenomes), I mapped the de novo cp reference from all 
+	# individuals to the reference chloroplast genomes
+# in hindsight, using the reference contigs isn't what I want to do, since that
+	# would obviously decrease the coverage to only what was assembled into a scaffold
+
+# using a single individual may miss some coverage found in other individuals, but it's a good
+	# estimate of the average coverage of the cp from sequencing
