@@ -9,7 +9,6 @@ Files to be included in this directory:
 	including R code for plotting
 3. Notes on parameters used for filtering, assembling, calling SNPs, and filtering again
 
+This is not generalized code, but it /is/ the code that was used to get the results in the paper.
 
 Sequence data is housed at NCBI's SRA database as BioProject PRJNA666435.
-
-
